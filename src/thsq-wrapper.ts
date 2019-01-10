@@ -2,16 +2,16 @@ import * as thsq from 'thsq';
 
 class ThsqWrapper {
   private thsq: thsq;
-  private apiKey: string = 'test_api_key_1234';
 
-  public constructor() {
+  public constructor(apiKey : string) {
     this.thsq = thsq;
+    this.initialize_thsq(apiKey);
   }
 
-  public initialize() : void {
-    return this.thsq.init({ token: this.apiKey });
+  public initialize_thsq(apiKey : string) : void {
+    return this.thsq.init({ token: apiKey });
   }
 
 }
 
-export default new ThsqWrapper();
+export default (apiKey : string) => { return new ThsqWrapper(apiKey); };
