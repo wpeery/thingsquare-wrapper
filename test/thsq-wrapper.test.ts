@@ -1,4 +1,5 @@
 import { thsqWrapperFactory } from '../src/thsq-wrapper';
+require('dotenv').config();
 
 test('constructor for thsq-wrapper', () => {
   const wrapper = thsqWrapperFactory();
@@ -21,7 +22,7 @@ test('initialize, invalid api key', async () => {
 
 test('initialize, valid api key', async () => {
   expect.assertions(1);
-  const apiKey = '3d96ac25ccda65b5f177921a2ac08e38';
+  const apiKey = process.env.VALID_API_KEY;
   const wrapper = thsqWrapperFactory();
   const result = await wrapper.init(apiKey);
   expect(result).toEqual({});

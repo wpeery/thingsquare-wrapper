@@ -20,8 +20,13 @@ class ThsqWrapper {
     return result;
   }
 
-  public initWithoutKey() : Promise<any> {
-    return new Promise(resolve => this.thsq.init(resolve));
+  public async initWithoutKey() : Promise<any> {
+    const promise = new Promise(resolve => this.thsq.init(resolve));
+    const result : object = await promise.then(devices => devices);
+    if (result === undefined) {
+      throw new Error('Error initalizing ThsqWrapper');
+    }
+    return result;
   }
 
 }
