@@ -11,8 +11,13 @@ class ThsqWrapper {
     this.thsq.destroy();
   }
 
-  public init(apiKey : string) : Promise<any> {
-    return new Promise(resolve => this.thsq.init({ token: apiKey }, resolve));
+  public async init(apiKey : string) : Promise<any> {
+    const promise = new Promise(resolve => this.thsq.init({ token: apiKey }, resolve));
+    const result : object = await promise.then(devices => devices);
+    if (result === undefined) {
+      throw new Error('API key is incorrect');
+    }
+    return result;
   }
 
   public initWithoutKey() : Promise<any> {
