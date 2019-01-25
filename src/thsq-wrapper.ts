@@ -1,17 +1,24 @@
 import * as thsq from 'thsq';
 
 class ThsqWrapper {
-  private thsq: thsq;
+  private thsq : thsq;
 
-  public constructor(apiKey : string) {
+  public constructor() {
     this.thsq = thsq;
-    this.initialize_thsq(apiKey);
   }
 
-  public initialize_thsq(apiKey : string) : void {
-    return this.thsq.init({ token: apiKey });
+  public disconnectFromServer() : void {
+    this.thsq.destroy();
+  }
+
+  public init(apiKey : string) : Promise<any> {
+    return new Promise(resolve => this.thsq.init({ token: apiKey }, resolve));
+  }
+
+  public initWithoutKey() : Promise<any> {
+    return new Promise(resolve => this.thsq.init(resolve));
   }
 
 }
 
-export default (apiKey : string) => { return new ThsqWrapper(apiKey); };
+export const thsqWrapperFactory = () => { return new ThsqWrapper(); };
