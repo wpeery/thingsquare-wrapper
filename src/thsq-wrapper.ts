@@ -1,5 +1,5 @@
 import * as thsq from 'thsq';
-import { Device, Devices } from './index';
+import { Device, Devices, Attribute } from './index';
 
 class ThsqWrapper {
   private thsq : thsq;
@@ -15,16 +15,39 @@ class ThsqWrapper {
   public async init(apiKey : string) : Promise<Devices> {
     let promise : Promise<Devices>;
     promise = new Promise(resolve => this.thsq.init({ token: apiKey }, resolve));
-    const result = await promise.then(devices => devices);
+    const result = await promise;
     if (result === undefined) {
       throw new Error('API key is incorrect');
     }
     return result;
   }
 
-  public async getDevice(unique : string) : Promise<Device> {
-    const promise : Promise<Device> = new Promise(resolve => this.thsq.getDevice(unique, resolve));
-    return await promise.then(device => device);
+  public async getDevice(unique : Attribute) : Promise<Device> {
+    return new Promise(resolve => this.thsq.getDevice(unique, resolve));
+  }
+
+  public async getDeviceList() : Promise<Devices> {
+    return new Promise(resolve => this.thsq.getDevicelist(resolve));
+  }
+
+  public async getVariable(unique : string,
+                           variableType : string,
+                           variableName : string) : Promise<Attribute> {
+
+    return new Promise(resolve => this.thsq.getVariable(unique,
+                                                        variableType,
+                                                        variableName,
+                                                        resolve));
+  }
+
+  public async getVariableHistory(unique : string,
+                                  variableType : string,
+                                  variableName : string,
+                                  options : object) : Promise<Attribute> {
+    return new Promise(resolve => this.thsq.getVariable(unique,
+                                                        variableType,
+                                                        variableName,
+                                                        resolve));
   }
 
 }

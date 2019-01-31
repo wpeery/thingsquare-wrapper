@@ -2,25 +2,34 @@ import { thsqWrapperFactory } from '../src/thsq-wrapper';
 import { Device, Devices } from '../src/index';
 
 require('dotenv').config();
+const wrapper = thsqWrapperFactory();
+
+beforeAll(() => {
+  return wrapper.init(process.env.VALID_API_KEY);
+});
+
+afterAll(() => {
+  wrapper.disconnectFromServer();
+});
 
 describe('test the getDevice function', async () => {
-  test('get device that exists', async () => {
+  test('device exists', async () => {
     expect.assertions(1);
-    const uniqueDevice = 'f647931d1c7f3c023d0344b4ab576dfa';
-    const wrapper = thsqWrapperFactory();
-    wrapper.init(process.env.VALID_API_KEY);
+    const uniqueDevice = {
+      time: 1538839131549,
+      value: 'f647931d1c7f3c023d0344b4ab576dfa',
+    };
     const device = await wrapper.getDevice(uniqueDevice);
     expect(device).toBeInstanceOf(Object);
-    wrapper.disconnectFromServer();
   });
 
-  test('get device that does not exist', async () => {
+  test('device does not exist', async () => {
     expect.assertions(1);
-    const uniqueDevice = '123451234notarealdevice';
-    const wrapper = thsqWrapperFactory();
-    wrapper.init(process.env.VALID_API_KEY);
+    const uniqueDevice = {
+      time: 1538839131549,
+      value: 'f',
+    };
     const device = await wrapper.getDevice(uniqueDevice);
-    expect(device).toBeUndefined();
-    wrapper.disconnectFromServer();
+    expect(device).toBe(undefined);
   });
 });

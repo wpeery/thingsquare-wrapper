@@ -37,3 +37,9 @@ export interface SlipRadio {
   unique : string;
   name : string;
 }
+
+export interface VariableHistoryOptions {
+  num : number;
+  chunksize : number;
+  progress : (num) => void;
+}
