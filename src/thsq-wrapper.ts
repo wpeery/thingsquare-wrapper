@@ -22,7 +22,7 @@ class ThsqWrapper {
     return result;
   }
 
-  public async getDevice(unique : Attribute) : Promise<Device> {
+  public async getDevice(unique : string) : Promise<Device> {
     return new Promise(resolve => this.thsq.getDevice(unique, resolve));
   }
 
