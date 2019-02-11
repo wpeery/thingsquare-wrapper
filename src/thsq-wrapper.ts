@@ -1,5 +1,4 @@
 import axios from 'axios'
-axios.defaults.withCredentials = true;
 import { Device, Devices, Attribute } from './index';
 
 const appKey = '0ac48bf3-9fab-4bad-8455-e394808eda6b'
@@ -12,21 +11,21 @@ class ThsqWrapper {
 
 
   public async init(apiKey : string) : Promise<string> {
-    const completeUrl2 = `${baseUrl}/0/session/`;
+    const completeUrl = `${baseUrl}/0/session/`;
+    console.log(completeUrl);
     this.apiKey = apiKey;
-    const response = await axios.post(completeUrl2, {
-      form: {
-        token: this.apiKey
+    const response = await axios({
+      url: completeUrl,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
       },
-      "headers": {
-        "Content-Type": "application/x-www-form-urlencoded"
-      }
-    });
+      data: `token=${this.apiKey}`
+    })
     if (response.data != 'user-ok') {
       throw new Error('API key is incorrect');
     }
     this.sessionCookie = response.headers['set-cookie'];
-    console.log(this.sessionCookie);
     return response.data;
   }
 
@@ -69,3 +68,9 @@ class ThsqWrapper {
 export const thsqWrapperFactory = () => { return new ThsqWrapper(); };
 // curl -c session.txt -X POST --data token=483568031efa40638872947df118d22a https://0ac48bf3-9fab-4bad-8455-e394808eda6b.developer.thingsquare.com/0/session/
 // curl -b session.txt https://0ac48bf3-9fab-4bad-8455-e394808eda6b.developer.thingsquare.com/0/devices/
+// curl -c session.txt -X POST --data token=483568031efa40638872947df118d22a https://httpbin.org/post
+
+// wget --keep-session-cookies --save-cookies cookies.txt https://0ac48bf3-9fab-4bad-8455-e394808eda6b.developer.thingsquare.com/0/session/ --post-data="token=483568031efa40638872947df118d22a"
+
+// wget --keep-session-cookies --save-cookies cookies.txt https://httpbin.org/post --post-data="token=483568031efa40638872947df118d22a"
+

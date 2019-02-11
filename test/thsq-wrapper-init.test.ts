@@ -35,7 +35,7 @@ describe('Test init function', () => {
     const result = await wrapper.init(apiKey);
     expect(result).toBe('user-ok');
     const devices = await wrapper.getDeviceList();
-    expect(devices).toBe({});
+    expect(devices).toEqual({});
   });
 
 });
