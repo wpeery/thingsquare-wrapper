@@ -12,28 +12,43 @@ class ThsqWrapper {
 
   public async init(apiKey : string) : Promise<string> {
     const completeUrl = `${baseUrl}/0/session/`;
-    console.log(completeUrl);
     this.apiKey = apiKey;
-    const response = await axios({
-      url: completeUrl,
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-      },
-      data: `token=${this.apiKey}`
-    })
-    if (response.data != 'user-ok') {
-      throw new Error('API key is incorrect');
+    try {
+      const response = await axios({
+        url: completeUrl,
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+        },
+        data: `token=${this.apiKey}`
+      });
+      this.sessionCookie = response.headers['set-cookie'];
+      return response.data;
     }
-    this.sessionCookie = response.headers['set-cookie'];
-    return response.data;
+    catch(e) {
+      throw new Error(e.message + '\nAPI key might be incorrect');
+    }
   }
 
-  // public async getDevice(unique : string) : Promise<Device> {
-  //   return new Promise(resolve => this.thsq.getDevice(unique, resolve));
-  // }
+  public async getDevice(id : string) : Promise<Device> {
+    try {
+      const response = await axios({
+        url: `${baseUrl}/0/devices/${id}`,
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+          Cookie: this.sessionCookie
+        },
+        data: `token=${this.apiKey}`
+      });
+      return response.data;
+    }
+    catch (e) {
+      return undefined;
+    }
+  }
 
-  public async getDeviceList() : Promise<any> {
+  public async getDeviceList() : Promise<Devices> {
     const url = `${baseUrl}/0/devices/`
     const response = await axios.get(url, {
       headers : {
