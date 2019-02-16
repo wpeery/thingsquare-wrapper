@@ -1,14 +1,12 @@
-import axios from 'axios'
+import axios from 'axios';
 import { Device, Devices, Attribute } from './index';
 
-const appKey = '0ac48bf3-9fab-4bad-8455-e394808eda6b'
-const baseUrl = `https://${appKey}.developer.thingsquare.com`
-
+const appKey = '0ac48bf3-9fab-4bad-8455-e394808eda6b';
+const baseUrl = `https://${appKey}.developer.thingsquare.com`;
 
 class ThsqWrapper {
   private apiKey : string;
   private sessionCookie : string;
-
 
   public async init(apiKey : string) : Promise<string> {
     const completeUrl = `${baseUrl}/0/session/`;
@@ -18,15 +16,14 @@ class ThsqWrapper {
         url: completeUrl,
         method: 'post',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
         },
-        data: `token=${this.apiKey}`
+        data: `token=${this.apiKey}`,
       });
       this.sessionCookie = response.headers['set-cookie'];
       return response.data;
-    }
-    catch(e) {
-      throw new Error(e.message + '\nAPI key might be incorrect');
+    } catch (e) {
+      throw new Error(`${e.message}\nAPI key might be incorrect`);
     }
   }
 
@@ -36,56 +33,61 @@ class ThsqWrapper {
         url: `${baseUrl}/0/devices/${id}`,
         method: 'get',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-          Cookie: this.sessionCookie
+          Cookie: this.sessionCookie,
         },
-        data: `token=${this.apiKey}`
       });
       return response.data;
-    }
-    catch (e) {
+    } catch (e) {
       return undefined;
     }
   }
 
   public async getDeviceList() : Promise<Devices> {
-    const url = `${baseUrl}/0/devices/`
-    const response = await axios.get(url, {
+    const response = await axios({
+      url: `${baseUrl}/0/devices/`,
+      method: 'get',
       headers : {
-        Cookie: this.sessionCookie
-      }
+        Cookie: this.sessionCookie,
+      },
     });
     return response.data;
   }
 
-  // public async getVariable(unique : string,
-  //                          variableType : string,
-  //                          variableName : string) : Promise<Attribute> {
+  public async getVariable(id : string,
+                           variableType : string,
+                           variableName : string) : Promise<Attribute> {
+    try {
+      const response = await axios({
+        url: `${baseUrl}/0/devices/${id}/${variableType}/${variableName}`,
+        method: 'get',
+        headers: {
+          Cookie: this.sessionCookie,
+        },
+      });
+      return response.data;
+    } catch (e) {
+      return undefined;
+    }
+  }
 
-  //   return new Promise(resolve => this.thsq.getVariable(unique,
-  //                                                       variableType,
-  //                                                       variableName,
-  //                                                       resolve));
-  // }
-
-  // public async getVariableHistory(unique : string,
-  //                                 variableType : string,
-  //                                 variableName : string,
-  //                                 options : object) : Promise<Attribute> {
-  //   return new Promise(resolve => this.thsq.getVariable(unique,
-  //                                                       variableType,
-  //                                                       variableName,
-  //                                                       resolve));
-  // }
+  public async getVariableHistory(id : string,
+                                  variableType : string,
+                                  variableName : string,
+                                  numDataPoints : string) : Promise<Attribute[]> {
+    try {
+      const response = await axios({
+        url: `${baseUrl}/0/devices/${id}/${variableType}/${variableName}?latest=${numDataPoints}`,
+        method: 'get',
+        headers: {
+          Cookie: this.sessionCookie,
+        },
+      });
+      return (response.data.length ? response.data : undefined);
+    } catch (e) {
+      return undefined;
+    }
+  }
 
 }
 
 export const thsqWrapperFactory = () => { return new ThsqWrapper(); };
-// curl -c session.txt -X POST --data token=483568031efa40638872947df118d22a https://0ac48bf3-9fab-4bad-8455-e394808eda6b.developer.thingsquare.com/0/session/
-// curl -b session.txt https://0ac48bf3-9fab-4bad-8455-e394808eda6b.developer.thingsquare.com/0/devices/
-// curl -c session.txt -X POST --data token=483568031efa40638872947df118d22a https://httpbin.org/post
-
-// wget --keep-session-cookies --save-cookies cookies.txt https://0ac48bf3-9fab-4bad-8455-e394808eda6b.developer.thingsquare.com/0/session/ --post-data="token=483568031efa40638872947df118d22a"
-
-// wget --keep-session-cookies --save-cookies cookies.txt https://httpbin.org/post --post-data="token=483568031efa40638872947df118d22a"
-
