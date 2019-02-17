@@ -8,10 +8,6 @@ beforeAll(() => {
   return wrapper.init(process.env.VALID_API_KEY);
 });
 
-afterAll(() => {
-  wrapper.disconnectFromServer();
-});
-
 describe('test the getDeviceList function', async () => {
   test('get device list', async () => {
     expect.assertions(1);

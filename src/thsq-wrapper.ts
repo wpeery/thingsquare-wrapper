@@ -1,53 +1,91 @@
-import * as thsq from 'thsq';
+import axios from 'axios';
 import { Device, Devices, Attribute } from './index';
 
+const appKey = '0ac48bf3-9fab-4bad-8455-e394808eda6b';
+const baseUrl = `https://${appKey}.developer.thingsquare.com`;
+
 class ThsqWrapper {
-  private thsq : thsq;
+  private apiKey : string;
+  private sessionCookie : string;
 
-  public constructor() {
-    this.thsq = thsq;
-  }
-
-  public disconnectFromServer() : void {
-    this.thsq.destroy();
-  }
-
-  public async init(apiKey : string) : Promise<Devices> {
-    let promise : Promise<Devices>;
-    promise = new Promise(resolve => this.thsq.init({ token: apiKey }, resolve));
-    const result = await promise;
-    if (result === undefined) {
-      throw new Error('API key is incorrect');
+  public async init(apiKey : string) : Promise<string> {
+    const completeUrl = `${baseUrl}/0/session/`;
+    this.apiKey = apiKey;
+    try {
+      const response = await axios({
+        url: completeUrl,
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+        },
+        data: `token=${this.apiKey}`,
+      });
+      this.sessionCookie = response.headers['set-cookie'];
+      return response.data;
+    } catch (e) {
+      throw new Error(`${e.message}\nAPI key might be incorrect`);
     }
-    return result;
   }
 
-  public async getDevice(unique : string) : Promise<Device> {
-    return new Promise(resolve => this.thsq.getDevice(unique, resolve));
+  public async getDevice(id : string) : Promise<Device> {
+    try {
+      const response = await axios({
+        url: `${baseUrl}/0/devices/${id}`,
+        method: 'get',
+        headers: {
+          Cookie: this.sessionCookie,
+        },
+      });
+      return response.data;
+    } catch (e) {
+      return undefined;
+    }
   }
 
   public async getDeviceList() : Promise<Devices> {
-    return new Promise(resolve => this.thsq.getDevicelist(resolve));
+    const response = await axios({
+      url: `${baseUrl}/0/devices/`,
+      method: 'get',
+      headers : {
+        Cookie: this.sessionCookie,
+      },
+    });
+    return response.data;
   }
 
-  public async getVariable(unique : string,
+  public async getVariable(id : string,
                            variableType : string,
                            variableName : string) : Promise<Attribute> {
-
-    return new Promise(resolve => this.thsq.getVariable(unique,
-                                                        variableType,
-                                                        variableName,
-                                                        resolve));
+    try {
+      const response = await axios({
+        url: `${baseUrl}/0/devices/${id}/${variableType}/${variableName}`,
+        method: 'get',
+        headers: {
+          Cookie: this.sessionCookie,
+        },
+      });
+      return response.data;
+    } catch (e) {
+      return undefined;
+    }
   }
 
-  public async getVariableHistory(unique : string,
+  public async getVariableHistory(id : string,
                                   variableType : string,
                                   variableName : string,
-                                  options : object) : Promise<Attribute> {
-    return new Promise(resolve => this.thsq.getVariable(unique,
-                                                        variableType,
-                                                        variableName,
-                                                        resolve));
+                                  numDataPoints : string) : Promise<Attribute[]> {
+    try {
+      const response = await axios({
+        url: `${baseUrl}/0/devices/${id}/${variableType}/${variableName}?latest=${numDataPoints}`,
+        method: 'get',
+        headers: {
+          Cookie: this.sessionCookie,
+        },
+      });
+      return (response.data.length ? response.data : undefined);
+    } catch (e) {
+      return undefined;
+    }
   }
 
 }
