@@ -25,21 +25,3 @@ export interface Attribute {
   time : number;
   value : string;
 }
-
-export interface LeakIq {
-  unique : string;
-  name : string;
-  flow1 : string;
-  flow2 : string;
-}
-
-export interface SlipRadio {
-  unique : string;
-  name : string;
-}
-
-export interface VariableHistoryOptions {
-  num : number;
-  chunksize : number;
-  progress : (num) => void;
-}
