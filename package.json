@@ -2,6 +2,7 @@
   "name": "thingsquare-wrapper",
   "version": "1.0.0",
   "description": "",
+  "types": "dist/src/thsq-wrapper",
   "main": "dist/src/thsq-wrapper.js",
   "scripts": {
     "build": "tsc",
