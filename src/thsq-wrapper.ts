@@ -4,7 +4,7 @@ import { Device, Devices, Attribute } from './index';
 const appKey = '0ac48bf3-9fab-4bad-8455-e394808eda6b';
 const baseUrl = `https://${appKey}.developer.thingsquare.com`;
 
-class ThsqWrapper {
+export class ThsqWrapper {
   private apiKey : string;
   private sessionCookie : string;
 
