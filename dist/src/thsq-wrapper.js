@@ -97,4 +97,5 @@ class ThsqWrapper {
         });
     }
 }
+exports.ThsqWrapper = ThsqWrapper;
 exports.thsqWrapperFactory = () => { return new ThsqWrapper(); };
