@@ -9,3 +9,4 @@ export declare class ThsqWrapper {
     getVariableHistory(id: string, variableType: string, variableName: string, numDataPoints: string): Promise<Attribute[]>;
 }
 export declare const thsqWrapperFactory: () => ThsqWrapper;
+export { Device, Devices, Attribute } from '../../src/index';
