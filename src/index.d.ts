@@ -1,10 +1,9 @@
 export interface Devices {
-  [uniqueId: string] : Device;
+  [id: string] : Device;
 }
 
 export interface Device {
    d : DTypes;
-   id : string;
    meta : MetaTypes;
    s : STypes;
 }
