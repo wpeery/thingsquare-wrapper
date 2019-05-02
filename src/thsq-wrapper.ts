@@ -70,6 +70,7 @@ export class ThsqWrapper {
     }
   }
 
+  // Zero data points will retrieve all data
   public async getVariableHistory(id : string,
                                   variableType : string,
                                   variableName : string,
