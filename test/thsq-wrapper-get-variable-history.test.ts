@@ -106,3 +106,35 @@ describe('test the getVariableHistory function', async () => {
     expect(variableHistory).toBeUndefined();
   });
 });
+
+describe('test the getVariableHistory function', async () => {
+  test('0 datapoints', async () => {
+    expect.assertions(1);
+    const id = '3a67bdc0-7b69-4879-9d08-b2902244f75c';
+    const type = 's';
+    const variableName = 'flow1';
+    const numDataPoints = '0';
+
+    const variableHistory = await wrapper.getVariableHistory(id,
+                                                             type,
+                                                             variableName,
+                                                             numDataPoints);
+    expect(variableHistory.length).toBe(488);
+  });
+});
+
+describe('test the getVariableHistory function', async () => {
+  test('-1 datapoints', async () => {
+    expect.assertions(1);
+    const id = '3a67bdc0-7b69-4879-9d08-b2902244f75c';
+    const type = 's';
+    const variableName = 'flow1';
+    const numDataPoints = '-1';
+
+    const variableHistory = await wrapper.getVariableHistory(id,
+                                                             type,
+                                                             variableName,
+                                                             numDataPoints);
+    expect(variableHistory).toBeUndefined();
+  });
+});
